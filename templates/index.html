@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Recetas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Estilo para las cajas */
+        .recipe-box {
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            height: 150px;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        /* Estilo para las cajas */
+        .recipe-boxq {
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            height: 150px;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }        
+        /* Modal estilo */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Recetas</h1>
+        <form action="/generate_recipe" method="post">
+            <label for="user_input">Ingresa ingredientes:</label>
+            <input type="text" id="user_input" name="user_input" required>
+            <button type="submit">Generar Receta</button>
+        </form>
+
+        {% if generated_recipe %}
+        <div class="output">
+            <h2>Receta Generada:</h2>
+            <p>{{ generated_recipe }}</p>
+            <button onclick="saveRecipe()">Guardar Receta</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Contenedor de las recetas guardadas -->
+    <div id="recipe-container">
+        <h2>Recetas Guardadas</h2>
+        <div id="saved-recipes"></div>
+    </div>
+
+
+  
+    <div>
+        <h2>Recetas Disponibles</h2>
+        <div id="available-recipes-container">
+            {% for recipe in recipes %}
+            <div class="recipe-box" 
+                 data-title="{{ recipe['title'] }}"
+                 data-ingredients="{{ recipe['ingredients']|replace('\n', '<br>') }}"
+                 data-steps="{{ recipe['steps']|replace('\n', '<br>') }}"
+                 
+                 data-url="{{ recipe['url'] }}"
+                 onclick="showRecipeFromData(this)">
+                <strong>{{ recipe['title'] }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    
+    <!-- Modal -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2 id="modal-title"></h2>
+            <p><strong>Ingredientes:</strong></p>
+            <p id="modal-ingredients"></p>
+            <p><strong>Pasos:</strong></p>
+            <p id="modal-steps"></p>
+            <p id="modal-content"></p>
+            <a id="modal-url" href="#" target="_blank">Ver más detalles</a>
+        </div>
+    </div>  
+    
+    <script>
+        // Funcionalidad para guardar la receta
+        function saveRecipe() {
+            const recipeName = prompt("Asigna un nombre a la receta:");
+            const recipeContent = `{{ generated_recipe|safe }}`; // Receta generada
+
+            if (recipeName && recipeContent) {
+                const container = document.getElementById('saved-recipes');
+
+                // Crear una caja para la receta
+                const recipeBox = document.createElement('div');
+                recipeBox.className = 'recipe-boxq';
+                recipeBox.textContent = recipeName;
+
+                // Guardar contenido en el dataset
+                recipeBox.dataset.content = recipeContent;
+
+                // Abrir modal al hacer clic
+                recipeBox.addEventListener('click', function() {
+                    document.getElementById('modal-title').textContent = recipeName;
+                    document.getElementById('modal-content').textContent = this.dataset.content;
+                    document.getElementById('recipeModal').style.display = 'block';
+                });
+
+                container.appendChild(recipeBox);
+            }
+        }
+
+        // Cerrar el modal
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('recipeModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('recipeModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+        function showRecipeModal(title, ingredients, steps, url) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-ingredients').innerHTML = ingredients;
+            document.getElementById('modal-steps').innerHTML = steps;
+            document.getElementById('modal-url').href = url;
+            document.getElementById('recipeModal').style.display = 'block';
+        }
+
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('recipeModal').style.display = 'none';
+        }
+        function showRecipeFromData(element) {
+            const title = element.dataset.title;
+            const ingredients = element.dataset.ingredients;
+            const steps = element.dataset.steps;
+            const url = element.dataset.url;
+
+            showRecipeModal(title, ingredients, steps, url);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('recipeModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }        
+    </script>
+</body>
+</html>

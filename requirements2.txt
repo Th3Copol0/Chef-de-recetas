@@ -1,0 +1,8 @@
+panel==1.5.3
+pandas==2.2.3
+numpy==2.1.2
+altair[all]==5.4.1
+jupyter-bokeh==4.0.5
+bokeh==3.6.0
+pyviz-comms==3.0.3
+ipywidgets==8.1.5
