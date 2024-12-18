@@ -24,3 +24,27 @@ Chef de Recetas es una aplicación diseñada para gestionar y organizar recetas 
 
    ```bash
    git clone https://github.com/Th3Copol0/Chef-de-recetas.git
+Navega al directorio del proyecto:
+
+bash
+Copiar código
+cd Chef-de-recetas
+Instala las dependencias necesarias:
+
+Si estás usando pip para gestionar las dependencias, puedes instalarlo de la siguiente manera:
+
+bash
+Copiar código
+pip install -r requirements.txt
+Asegúrate de tener Python y pip instalados en tu sistema.
+
+Ejecuta la aplicación:
+
+bash
+Copiar código
+python app.py
+Esto iniciará el servidor local de Flask (o el servidor correspondiente si usas otro framework).
+
+Uso
+Accede a la aplicación en tu navegador web en http://127.0.0.1:5000/ (por defecto si usas Flask).
+Puedes agregar nuevas recetas, consultar las existentes, y realizar otras acciones desde la interfaz web.
